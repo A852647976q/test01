@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>貨幣轉換器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f37777;
+            color: #333;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #444;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4545f6;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .result, .process {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+
+        .process {
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>貨幣轉換器</h1>
+        <label for="amount">輸入金額：</label>
+        <input type="number" id="amount" placeholder="輸入金額">
+        
+        <label>選擇貨幣：</label>
+        <div style="display: flex; gap: 10px;">
+            <select id="fromCurrency">
+                <option value="USD">美元 (USD)</option>
+                <option value="EUR">歐元 (EUR)</option>
+                <option value="JPY">日圓 (JPY)</option>
+                <option value="KRW">韓幣 (KRW)</option>
+                <option value="TWD">台幣 (TWD)</option>
+            </select>
+            <button onclick="swapCurrencies()">⇄</button>
+            <select id="toCurrency">
+                <option value="USD">美元 (USD)</option>
+                <option value="EUR">歐元 (EUR)</option>
+                <option value="JPY">日圓 (JPY)</option>
+                <option value="KRW">韓幣 (KRW)</option>
+                <option value="TWD">台幣 (TWD)</option>
+            </select>
+        </div>
+
+        <button onclick="convertCurrency()">轉換</button>
+        
+        <div class="result" id="result">你轉換的總金額。</div>
+        
+    </div>
+
+    <script>
+        // 假設的匯率 (可替換為 API 查詢即時匯率)
+        const exchangeRates = {
+            USD: { USD: 1, EUR: 0.93, JPY: 148.88, KRW: 1322.15, TWD: 32.13 },
+            EUR: { USD: 1.07, EUR: 1, JPY: 160.22, KRW: 1420.75, TWD: 34.52 },
+            JPY: { USD: 0.0067, EUR: 0.0062, JPY: 1, KRW: 8.87, TWD: 0.22 },
+            KRW: { USD: 0.00076, EUR: 0.0007, JPY: 0.11, KRW: 1, TWD: 0.025 },
+            TWD: { USD: 0.031, EUR: 0.029, JPY: 4.49, KRW: 39.95, TWD: 1 }
+        };
+
+        function swapCurrencies() {
+            const fromCurrency = document.getElementById("fromCurrency");
+            const toCurrency = document.getElementById("toCurrency");
+            const temp = fromCurrency.value;
+            fromCurrency.value = toCurrency.value;
+            toCurrency.value = temp;
+        }
+
+        function convertCurrency() {
+            const amount = parseFloat(document.getElementById("amount").value);
+            const fromCurrency = document.getElementById("fromCurrency").value;
+            const toCurrency = document.getElementById("toCurrency").value;
+            const resultDiv = document.getElementById("result");
+            const processDiv = document.getElementById("process");
+
+            if (isNaN(amount) || amount <= 0) {
+                resultDiv.innerHTML = "請輸入有效的金額！";
+                processDiv.innerHTML = "";
+                return;
+            }
+
+            // 匯率計算
+            const rate = exchangeRates[fromCurrency][toCurrency];
+            const convertedAmount = (amount * rate).toFixed(2);
+
+            // 顯示結果
+            resultDiv.innerHTML = `${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}`;
+            processDiv.innerHTML = `
+                <strong>轉換過程：</strong><br>
+                1. 選擇匯率：1 ${fromCurrency} = ${rate} ${toCurrency}<br>
+                2. 計算：${amount} × ${rate} = ${convertedAmount}
+            `;
+        }
+    </script>
+</body>
+</html>

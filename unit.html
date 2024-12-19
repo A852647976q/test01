@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>單位轉換器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #93278c;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #f48a12;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result, .process {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+
+        .process {
+            font-size: 14px;
+            color: #c44f4f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>單位轉換器</h1>
+        <label for="inputValue">輸入距離：</label>
+        <input type="number" id="inputValue" placeholder="輸入距離">
+        
+        <label>選擇單位：</label>
+        <div style="display: flex; gap: 10px;">
+            <select id="fromUnit">
+                <option value="km">公里 (km)</option>
+                <option value="m">公尺 (m)</option>
+                <option value="yd">碼 (yd)</option>
+                <option value="ft">英尺 (ft)</option>
+                <option value="cm">公分 (cm)</option>
+            </select>
+            <button onclick="swapUnits()">⇄</button>
+            <select id="toUnit">
+                <option value="km">公里 (km)</option>
+                <option value="m">公尺 (m)</option>
+                <option value="yd">碼 (yd)</option>
+                <option value="ft">英尺 (ft)</option>
+                <option value="cm">公分 (cm)</option>
+            </select>
+        </div>
+
+        <button onclick="convertUnit()">轉換</button>
+        
+        <div class="result" id="result">轉換後的距離。</div>
+        <div class="process" id="process">轉換過程。</div>
+    </div>
+
+    <script>
+        // 單位轉換表 (基於 1 公尺)
+        const conversionRates = {
+            km: 0.001,   // 公里
+            m: 1,        // 公尺
+            yd: 1.09361, // 碼
+            ft: 3.28084, // 英尺
+            cm: 100      // 公分
+        };
+
+        function swapUnits() {
+            const fromUnit = document.getElementById("fromUnit");
+            const toUnit = document.getElementById("toUnit");
+            const temp = fromUnit.value;
+            fromUnit.value = toUnit.value;
+            toUnit.value = temp;
+        }
+
+        function convertUnit() {
+            const inputValue = parseFloat(document.getElementById("inputValue").value);
+            const fromUnit = document.getElementById("fromUnit").value;
+            const toUnit = document.getElementById("toUnit").value;
+            const resultDiv = document.getElementById("result");
+            const processDiv = document.getElementById("process");
+
+            if (isNaN(inputValue) || inputValue <= 0) {
+                resultDiv.innerHTML = "請輸入有效的數值！";
+                processDiv.innerHTML = "";
+                return;
+            }
+
+            // 單位轉換計算
+            const fromRate = conversionRates[fromUnit];
+            const toRate = conversionRates[toUnit];
+            const inMeters = inputValue / fromRate; // 先轉成公尺
+            const convertedValue = (inMeters * toRate).toFixed(2);
+
+            // 顯示結果
+            resultDiv.innerHTML = `${inputValue} ${fromUnit} = ${convertedValue} ${toUnit}`;
+            processDiv.innerHTML = `
+                <strong>轉換過程：</strong><br>
+                1. 將 ${inputValue} ${fromUnit} 轉成公尺：${inputValue} ÷ ${fromRate} = ${(inMeters).toFixed(2)} 公尺<br>
+                2. 將公尺轉成 ${toUnit}：${(inMeters).toFixed(2)} × ${toRate} = ${convertedValue} ${toUnit}
+            `;
+        }
+    </script>
+</body>
+</html>
